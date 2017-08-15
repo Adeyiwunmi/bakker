@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/ten_dp">
+
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+          <ImageView
+              android:layout_width="@dimen/imageHeight"
+              android:layout_height="wrap_content"
+              android:src="@drawable/star"
+              android:id="@+id/idImageRecipe"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_toRightOf="@id/idImageRecipe"
+                android:layout_marginLeft="@dimen/thirty_dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/recipe_name"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/eighteensp"
+                    android:textStyle="bold"
+                    android:fontFamily="ubuntu"
+                    android:id="@+id/idRecipeNameTv"
+                    android:paddingTop="@dimen/fifty_dp"
+                    android:textColor="@color/colorPrimaryDark"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/servings"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/black"
+                    android:id="@+id/idStepsTv"
+                    android:layout_marginTop="@dimen/sixteendp"
+                    />
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+</LinearLayout>

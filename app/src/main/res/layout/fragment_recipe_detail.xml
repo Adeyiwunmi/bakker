@@ -1,0 +1,71 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/seven_dp"
+    tools:context="com.jp.bakingapp.fragments.RecipeDetailFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+<android.support.v4.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/gold_color"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/gold_color"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ingredient_list"
+                android:textColor="@color/black"
+                android:fontFamily="cursive"
+                android:textStyle="bold"
+                android:paddingLeft="@dimen/ten_dp"
+                android:textSize="@dimen/eighteensp"
+                android:layout_marginBottom="@dimen/four"/>
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gold_color"
+                android:paddingLeft="@dimen/ten_dp"
+                android:id="@+id/idRecyclerViewIngredient"></android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/sixteendp"
+        android:layout_height="match_parent"
+        android:id="@+id/idRecyclerViewSteps">
+
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>
+
+
+
+    </LinearLayout>
+
+</ScrollView>

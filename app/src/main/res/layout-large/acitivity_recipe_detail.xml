@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.jp.bakingapp.RecipeDetailActivity">
+
+
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+
+    <FrameLayout
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:id="@+id/idFRameLayoutRecipeDetailLarge">
+    </FrameLayout>
+<View
+    android:layout_width="@dimen/onedp"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    ></View>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/idcontainerStepFragLarge">
+
+    </FrameLayout>
+
+<FrameLayout
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:id="@+id/idContainer_Step_activity"/>
+
+
+</LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
