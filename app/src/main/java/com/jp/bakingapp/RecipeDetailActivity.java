@@ -38,6 +38,7 @@ ArrayList<Step> stepArrayList;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitivity_recipe_detail);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState != null) {
             stepArrayList = savedInstanceState.getParcelableArrayList(KEY_STEP_LIST);
             ingredientArrayList = savedInstanceState.getParcelableArrayList(KEY_ING_LIST);

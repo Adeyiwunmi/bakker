@@ -30,7 +30,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".RecipeDetailActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden">
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:parentActivityName=".MainActivity"
+            >
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
 
         <receiver android:name=".NewAppWidget">
