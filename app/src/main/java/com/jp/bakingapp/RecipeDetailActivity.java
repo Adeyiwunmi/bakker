@@ -3,7 +3,6 @@ package com.jp.bakingapp;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
@@ -20,7 +19,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     public static final  String KEY_INTENT_STEP_DESC= "step description";
     public static final  String KEY_INTENT_STEP_SHORT_DESC= "step short description";
     public static final  String KEY_INTENT_STEP_VIDEO_URL= "step video url";
-    public static final  String KEY_INTENT_STEP_THUMBNAIL_URL= "step thumbnbail url";
+    public static final  String KEY_FRAG = "fragment";
     private  static final  String Tag_frag = "tag";
   RecipeDetailFragment recipeDetailFragment;
 
@@ -33,6 +32,10 @@ ArrayList<Step> stepArrayList;
     ArrayList<Ingredient> ingredientArrayList;
     String recipeName ;
       private  static  String FRAG_TAG1 = "tag1";
+    static  int FrameLayoutid;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,23 +45,10 @@ ArrayList<Step> stepArrayList;
         if (savedInstanceState != null) {
             stepArrayList = savedInstanceState.getParcelableArrayList(KEY_STEP_LIST);
             ingredientArrayList = savedInstanceState.getParcelableArrayList(KEY_ING_LIST);
-            //recipeDetailFragment = (RecipeDetailFragment)getSupportFragmentManager().findFragmentByTag(Tag_frag);
-            recipeDetailFragment = RecipeDetailFragment.newInstance(stepArrayList, ingredientArrayList,recipeName);
-           FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            int frameLayoutId ;
-            if (isLarge()){
-                frameLayoutId = R.id.idFRameLayoutRecipeDetailLarge;
-            }  else {
-                frameLayoutId = R.id.idContainer_Step_activity;
-            }
-                     fragmentTransaction.replace(frameLayoutId,recipeDetailFragment);
-            fragmentTransaction.commit();
-         //   FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            //fragmentTransaction.remove(recipeDetailFragment);
-           // fragmentTransaction.replace(frameLayoutId, recipeDetailFragment, Tag_frag);
-           // fragmentTransaction.commit();
-            //setUp();
-
+         recipeDetailFragment = (RecipeDetailFragment)getSupportFragmentManager().getFragment(savedInstanceState,KEY_FRAG);
+          getSupportFragmentManager().beginTransaction().remove(recipeDetailFragment).commit();
+            getSupportFragmentManager().executePendingTransactions();
+            getSupportFragmentManager().beginTransaction().replace(getLayoutId(),recipeDetailFragment).commit();
         } else {
             if (getIntent() != null) {
                 stepArrayList = getIntent().getParcelableArrayListExtra(KEY_INTENT_STEPS);
@@ -75,18 +65,17 @@ ArrayList<Step> stepArrayList;
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(KEY_STEP_LIST, stepArrayList);
         outState.putParcelableArrayList(KEY_ING_LIST, ingredientArrayList);
+        if (recipeDetailFragment != null){
+        getSupportFragmentManager().putFragment(outState,KEY_FRAG, recipeDetailFragment);
+        }
+
     }
     private  void  setUp(){
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
              recipeDetailFragment = RecipeDetailFragment.newInstance(stepArrayList, ingredientArrayList, recipeName);
-            //       recipeDetailFragment.setRetainInstance(true);
-                    int frameLayoutId ;
-         if (isLarge()){
-             frameLayoutId = R.id.idFRameLayoutRecipeDetailLarge;
-         }  else {
-             frameLayoutId = R.id.idContainer_Step_activity;
-         }
-        fragmentTransaction.add(frameLayoutId, recipeDetailFragment, Tag_frag);
+                 recipeDetailFragment.setRetainInstance(true);
+
+        fragmentTransaction.add(getLayoutId(), recipeDetailFragment, Tag_frag);
         fragmentTransaction.commit();
 
 
@@ -112,6 +101,16 @@ ArrayList<Step> stepArrayList;
 
 
     }
+private  int getLayoutId(){
+    if (isLarge()){
+        return R.id.idFRameLayoutRecipeDetailLarge;
+    }
+    else {
+        return R.id.idContainer_Step_activity;
+    }
+}
+
+
 
 }
 

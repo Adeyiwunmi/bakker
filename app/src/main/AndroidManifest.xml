@@ -30,7 +30,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".RecipeDetailActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
             android:parentActivityName=".MainActivity"
             >
 

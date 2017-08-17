@@ -58,6 +58,7 @@ Parcelable stateLayoutManIng;
         outState.putParcelable(KEY_STATE_ING, stateLayoutManIng);
         outState.putParcelableArrayList(KEY_STEP_SAVED, stepArrayList);
         outState.putParcelableArrayList(KEY_ING_SAVED, ingredientArrayList);
+
     }
 
     private  int orientation;
