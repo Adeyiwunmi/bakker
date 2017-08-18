@@ -13,7 +13,14 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/idContainer_Step_activity"></FrameLayout>
+            android:id="@+id/idContainer_Step_activity">
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/idcontainerStepFragLarge"></FrameLayout>
+        </FrameLayout>
     </ScrollView>
+
+
 
 </android.support.constraint.ConstraintLayout>

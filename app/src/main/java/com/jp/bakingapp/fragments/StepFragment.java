@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
@@ -57,7 +58,7 @@ public class StepFragment extends Fragment implements View.OnClickListener {
     private static final String AUTOPLAY = "autoplay";
     private  int currentWindow = 0;
     private int step_index;
-    private long playbackPosition = 0;
+    private  static long playbackPosition = 0;
     private boolean playWhenReady = false;
     private SimpleExoPlayer player;
     private static final String TAG = "tag";
@@ -90,28 +91,36 @@ public class StepFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            playbackPosition = savedInstanceState.getLong(PLAYBACK_POSITION, 0);
-            currentWindow = savedInstanceState.getInt(CURRENT_WINDOW_INDEX, 0);
-            playWhenReady = savedInstanceState.getBoolean(AUTOPLAY, false);
-        }
-            View view = inflater.inflate(R.layout.fragment_step, container, false);
+        View view = inflater.inflate(R.layout.fragment_step, container, false);
         ButterKnife.bind(this, view);
         Bundle bundle = getArguments();
        vid_url = bundle.getString(KEY_STEP_VID_URL);
         String step_desc = bundle.getString(KEY_STEP_DESC);
         step_index=  bundle.getInt(KEY_STEP_INDEX);
         stepDescTV.setText(step_desc);
-         checkAndLoadImage(bundle.getString(KEY_STEP_THUMBNAIL_URL));
-       initializePlayer(vid_url);
-      btnNextStep.setOnClickListener(this);
-        btnPrevStep.setOnClickListener(this);
-    
+        checkAndLoadImage(bundle.getString(KEY_STEP_THUMBNAIL_URL));
 
+
+        if (savedInstanceState != null) {
+              initializePlayer(vid_url, savedInstanceState.getLong(PLAYBACK_POSITION),
+                      savedInstanceState.getBoolean(AUTOPLAY),
+                      savedInstanceState.getInt(CURRENT_WINDOW_INDEX));
+           // Toast.makeText(getActivity(), "savedinstance was not null" , Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), String.valueOf(savedInstanceState.getLong(PLAYBACK_POSITION)),Toast.LENGTH_SHORT).show();
+        }   else {
+
+            initializePlayer(vid_url);
+
+        }
+
+         btnNextStep.setOnClickListener(this);
+        btnPrevStep.setOnClickListener(this);
         // Inflate the layout for this fragment
         return view;
     }
-public  void  initializePlayer(String video_url){
+
+
+public  void  initializePlayer(String video_url ){
 if (player == null) {
 
 //TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
@@ -122,20 +131,45 @@ if (player == null) {
     player.setPlayWhenReady(playWhenReady);
     player.seekTo(currentWindow, playbackPosition);
 
+
+   //     player.seekTo(playbackPosition);
+
     Uri uri = Uri.parse(video_url);
     MediaSource mediaSource = buildMediaSource(uri);
     player.prepare(mediaSource);
 
 }
+
 }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (Util.SDK_INT > 23){
-            //initializePlayer(step_vid_url);
+
+    public  void  initializePlayer(String video_url, final long position, boolean play, int window ) {
+
+
+//TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
+            player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getActivity()),
+                    new DefaultTrackSelector(), new DefaultLoadControl());
+            exoPlayerView.setPlayer(player);
+
+            player.setPlayWhenReady(play);
+            player.seekTo(window,position);
+
+
+            //     player.seekTo(playbackPosition);
+
+            Uri uri = Uri.parse(video_url);
+            MediaSource mediaSource = buildMediaSource(uri);
+            player.prepare(mediaSource);
+
+            Handler hanlder = new Handler();
+            hanlder.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    player.seekTo(position);
+                }
+            }, 2000);
         }
-    }
+
 
     private MediaSource buildMediaSource(Uri uri){
         return  new ExtractorMediaSource(uri,new DefaultHttpDataSourceFactory("ua"),new DefaultExtractorsFactory(), null,null);
@@ -146,7 +180,7 @@ if (player == null) {
     public void onResume() {
         super.onResume();
         hideSystemUi();
-        if ((Util.SDK_INT <= 23 || player == null)){
+        if ((Util.SDK_INT <= 23) && (vid_url != null) ){
            initializePlayer(vid_url);
         }
 
@@ -161,35 +195,40 @@ if (player == null) {
         |View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
         |View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
     }
-
+/**
 
     @Override
     public void onPause() {
         super.onPause();
         if (Util.SDK_INT <= 23){
+            //playbackPosition = player.getCurrentPosition();
             releasePlayer();
         }
 
     }
-
+*/
     private void releasePlayer(){
         if (player != null){
             playbackPosition = player.getCurrentPosition();
             currentWindow = player.getCurrentWindowIndex();
             playWhenReady = player.getPlayWhenReady();
+            player.stop();
             player.release();
             player = null;
         }
 
     }
 
-    @Override
+    /**
+     * @Override
     public void onStop() {
-        super.onStop();
-        if (Util.SDK_INT > 23){
-            releasePlayer();
-        }
+    super.onStop();
+    if (Util.SDK_INT > 23){
+    releasePlayer();
     }
+    }
+
+     */
 
 
     @Override
@@ -201,11 +240,12 @@ if (player == null) {
         * NOTE: we cannot save player state in onDestroy like we did in onPause and onStop
         * the reason being our activity will be recreated from scratch and we would have lost all members (e.g. variables, objects) of this activity
         */
-        if (player != null) {
-            outState.putLong(PLAYBACK_POSITION, playbackPosition);
-            outState.putInt(CURRENT_WINDOW_INDEX, currentWindow);
-            outState.putBoolean(AUTOPLAY, playWhenReady);
-        }
+
+
+            outState.putLong(PLAYBACK_POSITION, getPlayerInstance().getCurrentPosition());
+            outState.putInt(CURRENT_WINDOW_INDEX, getPlayerInstance().getCurrentWindowIndex());
+            outState.putBoolean(AUTOPLAY, getPlayerInstance().getPlayWhenReady());
+
     }
 
 private  void  checkAndLoadImage(String stepImageUrl){
@@ -296,6 +336,10 @@ private  void  checkAndLoadImage(String stepImageUrl){
         }
     }
 
+private SimpleExoPlayer getPlayerInstance(){
+    return StepFragment.this.player;
+
+}
 
 
 }

@@ -3,14 +3,18 @@ package com.jp.bakingapp;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import com.jp.bakingapp.fragments.RecipeDetailFragment;
+import com.jp.bakingapp.fragments.StepFragment;
 import com.jp.bakingapp.model.Ingredient;
 import com.jp.bakingapp.model.Step;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecipeDetailActivity extends AppCompatActivity {
     public static final String KEY_STEP_LIST = "ingredients";
@@ -21,8 +25,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
     public static final  String KEY_INTENT_STEP_VIDEO_URL= "step video url";
     public static final  String KEY_FRAG = "fragment";
     private  static final  String Tag_frag = "tag";
-  RecipeDetailFragment recipeDetailFragment;
-
+    private static final String KEY_RECIPE_NAME = "reicpe name" ;
+    RecipeDetailFragment recipeDetailFragment;
+    StepFragment stepFragment;
 
 
     private static final String KEY_INTENT_NAME= "name";
@@ -41,14 +46,34 @@ ArrayList<Step> stepArrayList;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitivity_recipe_detail);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         if (savedInstanceState != null) {
-            stepArrayList = savedInstanceState.getParcelableArrayList(KEY_STEP_LIST);
-            ingredientArrayList = savedInstanceState.getParcelableArrayList(KEY_ING_LIST);
-         recipeDetailFragment = (RecipeDetailFragment)getSupportFragmentManager().getFragment(savedInstanceState,KEY_FRAG);
-          getSupportFragmentManager().beginTransaction().remove(recipeDetailFragment).commit();
-            getSupportFragmentManager().executePendingTransactions();
-            getSupportFragmentManager().beginTransaction().replace(getLayoutId(),recipeDetailFragment).commit();
+            Fragment mFragment = getSupportFragmentManager().getFragment(savedInstanceState, KEY_FRAG);
+
+            if ( !(mFragment  instanceof  StepFragment)){
+                stepArrayList = savedInstanceState.getParcelableArrayList(KEY_STEP_LIST);
+                ingredientArrayList = savedInstanceState.getParcelableArrayList(KEY_ING_LIST);
+                recipeDetailFragment = (RecipeDetailFragment)getSupportFragmentManager().getFragment(savedInstanceState,KEY_FRAG);
+                getSupportFragmentManager().beginTransaction().remove(recipeDetailFragment).commit();
+                getSupportFragmentManager().executePendingTransactions();
+                getSupportFragmentManager().beginTransaction().replace(getLayoutId(),recipeDetailFragment).commit();
+
+            }  else {
+                stepFragment = (StepFragment)getSupportFragmentManager().getFragment(savedInstanceState, KEY_FRAG);
+                 getSupportFragmentManager().beginTransaction().remove(stepFragment).commit();
+                getSupportFragmentManager().executePendingTransactions();
+                getSupportFragmentManager().beginTransaction().replace(getStepLayout(), stepFragment).commit();
+                if (isLarge()){
+                    stepArrayList = getIntent().getParcelableArrayListExtra(KEY_INTENT_STEPS);
+                    ingredientArrayList = getIntent().getParcelableArrayListExtra(KEY_INTENT_INGREDIENTS);
+                    recipeName = getIntent().getStringExtra(KEY_INTENT_NAME);
+                    getSupportActionBar().setTitle(recipeName);
+                    setUp();
+
+                }
+            }
+
         } else {
             if (getIntent() != null) {
                 stepArrayList = getIntent().getParcelableArrayListExtra(KEY_INTENT_STEPS);
@@ -63,11 +88,14 @@ ArrayList<Step> stepArrayList;
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(KEY_STEP_LIST, stepArrayList);
         outState.putParcelableArrayList(KEY_ING_LIST, ingredientArrayList);
-        if (recipeDetailFragment != null){
-        getSupportFragmentManager().putFragment(outState,KEY_FRAG, recipeDetailFragment);
-        }
+        outState.putParcelableArrayList(KEY_STEP_LIST, stepArrayList);
+        outState.putString(KEY_RECIPE_NAME, recipeName);
+       // if (recipeDetailFragment != null   && recipeDetailFragment.isAdded()){
+        getSupportFragmentManager().putFragment(outState,KEY_FRAG, getCurrentFragment());
+        //}   else {
+        //    getSupportFragmentManager().putFragment(outState, KEY_FRAG,getCur );
+
 
     }
     private  void  setUp(){
@@ -109,8 +137,27 @@ private  int getLayoutId(){
         return R.id.idContainer_Step_activity;
     }
 }
+private int getStepLayout(){
+    if (isLarge()){
+        return R.id.idcontainerStepFragLarge;
+    }
+    else {
+        return R.id.idContainer_Step_activity;
+    }
 
+}
 
+private  Fragment getCurrentFragment(){
 
+    FragmentManager fragmentManager = RecipeDetailActivity.this.getSupportFragmentManager();
+    List<Fragment> fragments = fragmentManager.getFragments();
+    for (Fragment fragment: fragments) {
+        if (fragment!= null && fragment.isVisible()){
+            return fragment;
+        }
+
+   }
+    return null;
+}
 }
 

@@ -130,6 +130,7 @@ Parcelable stateLayoutManIng;
             String step_thumbUrl = step.getThumbnailUrl();
             StepFragment stepFragment = StepFragment.newInstance(step_vid_url,step_desc, step_thumbUrl, position);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            stepFragment.setRetainInstance(true);
             fragmentTransaction.replace(R.id.idContainer_Step_activity,stepFragment);
             fragmentTransaction.commit();
 
@@ -159,6 +160,7 @@ Parcelable stateLayoutManIng;
             String step_thumb_url = step.getThumbnailUrl();
             StepFragment stepFragment = StepFragment.newInstance(step_vid_url,step_desc, step_thumb_url, position);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            stepFragment.setRetainInstance(true);
             fragmentTransaction.replace(R.id.idcontainerStepFragLarge,stepFragment);
             fragmentTransaction.commit();
 
